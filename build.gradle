@@ -22,6 +22,7 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
+// Ref: https://discussions.udacity.com/t/last-optional-step-how-to-start-an-external-module-task-from-the-root-build-gradle/24211
 evaluationDependsOn ":app"
 evaluationDependsOn ":backend"
 
