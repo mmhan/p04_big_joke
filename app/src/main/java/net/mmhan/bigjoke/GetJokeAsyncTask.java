@@ -1,30 +1,24 @@
 package net.mmhan.bigjoke;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v4.util.Pair;
-import android.view.View;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
-import net.mmhan.JokeRepo;
 import net.mmhan.bigjoke.backend.myApi.MyApi;
-import net.mmhan.bigjokeviews.JokeActivity;
 
 import java.io.IOException;
 
 /**
  * Created by mmhan on 15/12/15.
  */
-public class GetJokeAsyncTask extends AsyncTask<Pair<Context, View>, Void, String> {
+public class GetJokeAsyncTask extends AsyncTask<GetJokeAsyncTask.GetJokeAsyncTaskListener, Integer, String> {
     private static MyApi myApiService = null;
-    private Context context;
-    private View view;
+    private GetJokeAsyncTaskListener mListener;
 
     @Override
-    protected String doInBackground(Pair<Context, View>... params) {
+    protected String doInBackground(GetJokeAsyncTaskListener... params) {
+        mListener = params[0];
         if(myApiService == null) {  // Only do this once
 //            MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
 //                    new AndroidJsonFactory(), null)
@@ -47,9 +41,6 @@ public class GetJokeAsyncTask extends AsyncTask<Pair<Context, View>, Void, Strin
             myApiService = builder.build();
         }
 
-        context = params[0].first;
-        view = params[0].second;
-
         try {
             return myApiService.getJoke().execute().getData();
         } catch (IOException e) {
@@ -59,10 +50,11 @@ public class GetJokeAsyncTask extends AsyncTask<Pair<Context, View>, Void, Strin
 
     @Override
     protected void onPostExecute(String result) {
-        Intent i = new Intent(context, JokeActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        i.putExtra(JokeActivity.JOKE_EXTRA, JokeRepo.get());
-        context.startActivity(i);
-        view.setVisibility(View.GONE);
+        mListener.onComplete(result);
+
+    }
+
+    public interface GetJokeAsyncTaskListener{
+        public void onComplete(String result);
     }
 }
