@@ -21,3 +21,15 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+evaluationDependsOn ":app"
+evaluationDependsOn ":backend"
+
+project(":backend"){
+    appengine{
+        daemon true
+    }
+}
+
+task runFunctionalTest(dependsOn: ":backend:appengineRun") { }
+runFunctionalTest.finalizedBy([":app:connectedCheck", ":backend:appengineStop"])

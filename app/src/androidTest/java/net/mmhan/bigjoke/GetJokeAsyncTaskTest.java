@@ -26,7 +26,7 @@ public class GetJokeAsyncTaskTest extends TestCase {
     }
 
     public void testGetJokeAsyncTask() throws Exception {
-        new GetJokeAsyncTask().execute(new GetJokeAsyncTask.GetJokeAsyncTaskListener(){
+        new GetJokeAsyncTask(false).execute(new GetJokeAsyncTask.GetJokeAsyncTaskListener(){
             @Override
             public void onComplete(String result) {
                 mResult = result;

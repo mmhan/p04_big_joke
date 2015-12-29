@@ -1,8 +1,7 @@
 package net.mmhan.bigjoke;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -11,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+
+import net.mmhan.bigjokeviews.JokeActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,9 +35,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void fetchJoke(){
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
-        new GetJokeAsyncTask().execute(new Pair<Context, View>(getApplicationContext(), progressBar));
+        new GetJokeAsyncTask(true).execute(new GetJokeAsyncTask.GetJokeAsyncTaskListener() {
+            @Override
+            public void onComplete(String result) {
+                Intent i = new Intent(getApplicationContext(), JokeActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                i.putExtra(JokeActivity.JOKE_EXTRA, result);
+                startActivity(i);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override

@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     public void fetchJoke(){
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
-        new GetJokeAsyncTask().execute(new GetJokeAsyncTask.GetJokeAsyncTaskListener(){
+        new GetJokeAsyncTask(true).execute(new GetJokeAsyncTask.GetJokeAsyncTaskListener(){
             @Override
             public void onComplete(String result) {
                 Intent i = new Intent(getApplicationContext(), JokeActivity.class);
