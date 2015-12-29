@@ -22,7 +22,7 @@ public class AdManager {
             @Override
             public void onAdClosed() {
                 requestNewInterstitial();
-                ctx.fetchJoke();
+                ctx.launchJokeActivity();
                 super.onAdClosed();
             }
         });

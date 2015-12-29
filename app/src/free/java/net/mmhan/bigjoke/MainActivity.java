@@ -16,6 +16,8 @@ import net.mmhan.bigjokeviews.JokeActivity;
 public class MainActivity extends AppCompatActivity {
 
     AdManager manager;
+    String result = null;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         Log.e("FREE MainActivity", "onCreate");
 
@@ -34,29 +37,35 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(manager.adIsLoaded()){
-                    manager.showAd();
-                }else{
-                    fetchJoke();
-                }
-           }
+                fetchJoke();
+            }
         });
     }
 
     public void fetchJoke(){
-        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
-        new GetJokeAsyncTask(true).execute(new GetJokeAsyncTask.GetJokeAsyncTaskListener(){
+        new GetJokeAsyncTask(true).execute(new GetJokeAsyncTask.GetJokeAsyncTaskListener() {
             @Override
-            public void onComplete(String result) {
-                Intent i = new Intent(getApplicationContext(), JokeActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra(JokeActivity.JOKE_EXTRA, result);
-                startActivity(i);
-                progressBar.setVisibility(View.GONE);
+            public void onComplete(String r) {
+                result = r;
+                if (manager.adIsLoaded()) {
+                    manager.showAd();
+                } else {
+                    launchJokeActivity();
+                }
             }
         });
     }
+
+    public void launchJokeActivity(){
+        Intent i = new Intent(getApplicationContext(), JokeActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.putExtra(JokeActivity.JOKE_EXTRA, result);
+        startActivity(i);
+        progressBar.setVisibility(View.GONE);
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
